@@ -1,0 +1,15 @@
+{
+
+    "name" : "virtjs-loggers",
+    "version" : "0.0.1",
+
+    "bin" : {
+        "virtjs-logger.gb" : "binaries/virtjs-logger.gb"
+    },
+
+    "dependencies" : {
+        "systemjs" : "^0.8.2",
+        "virtjs" : "*"
+    }
+
+}
