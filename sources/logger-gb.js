@@ -23,7 +23,7 @@ export var main = ( [ rom ] ) => {
 
     } } );
 
-    var register = ( name, size ) => formatHexadecimal( engine.environment[ name ], size );
+    var register = ( name, size ) => name + ':' + formatHexadecimal( engine.environment[ name ], size );
 
     engine._interpreter.on( 'post-instruction', e => { console.log( [
 
