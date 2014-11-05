@@ -4,7 +4,8 @@ import { ImmediateTimer }                   from 'virtjs/devices/timers/Immediat
 import { formatAddress, formatHexadecimal } from 'virtjs/utils/FormatUtils';
 import { fetch }                            from 'virtjs/tools';
 
-import { Engine }                           from 'virtjs-gbjit/Engine';
+import { Engine }                           from 'virtjs-gb/Engine';
+import { inputs }                           from 'virtjs-gb/constants';
 
 export var main = ( [ rom ] ) => {
 
@@ -24,24 +25,34 @@ export var main = ( [ rom ] ) => {
     } } );
 
     var register = ( name, size ) => name + ':' + formatHexadecimal( engine.environment[ name ], size );
+    var memory = ( address ) => formatHexadecimal( address, 16, false ) + ':' + formatHexadecimal( engine.mmu.readUint8( address ), 8 );
 
-    engine._interpreter.on( 'post-instruction', e => { console.log( [
+    var o = memory;
+    memory = ( address ) => {
+        try {
+            return o( address );
+        } catch ( e ) {
+            return 'NaN';
+        }
+    };
+
+    engine.interpreter.on( 'post-instruction', e => { console.log( [
 
         '[instruction]',
 
         formatAddress( e.address, 16 ),
         formatHexadecimal( e.opcode, 16 ),
 
-        register( 'a', 8 ),
-        register( 'f', 8 ),
-        register( 'b', 8 ),
-        register( 'c', 8 ),
-        register( 'd', 8 ),
-        register( 'e', 8 ),
-        register( 'h', 8 ),
-        register( 'l', 8 ),
+        'rom:' + formatHexadecimal( engine.environment.mbcRomBank, 8 ),
+        'ram:' + formatHexadecimal( engine.environment.mbcRamBank, 8 ),
+        'ime:' + formatHexadecimal( engine.environment.cpuInterruptFeature, 8 ),
+        register( 'af', 16 ),
+        register( 'bc', 16 ),
+        register( 'de', 16 ),
+        register( 'hl', 16 ),
         register( 'pc', 16 ),
-        register( 'sp', 16 )
+        register( 'sp', 16 ),
+        memory( 0x9190 )
 
     ].join( ' ' ) ); } );
 
